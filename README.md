@@ -202,9 +202,46 @@ sam deploy --stack-name portfolio-contact-backend --region ap-south-1 `
 > explicit flags (as above) avoids the interactive prompt entirely and sidesteps
 > the issue.
 
-**Confirm the SNS email subscription** — check your inbox for an email from
-AWS titled "AWS Notification - Subscription Confirmation" and click **Confirm
-subscription**. Submissions won't reach you until this is done.
+### Manually confirm the SNS subscription
+
+When `sam deploy` creates the `ContactTopic` SNS topic, it also creates an
+**email subscription** to it (defined in `template.yaml` via the
+`NotificationEmail` parameter). That subscription starts in a
+**"Pending confirmation"** state — SNS won't deliver any notifications to it
+until a human approves it. This is an anti-spam protection built into SNS: it
+stops anyone from silently subscribing your inbox to a topic without consent.
+
+**Steps to confirm it:**
+
+1. Open the inbox for the address you passed as `NotificationEmail`
+2. Look for an email from **`no-reply@sns.amazonaws.com`**, subject line
+   **"AWS Notification - Subscription Confirmation"** — this usually arrives
+   within a minute or two of the deploy finishing. Check spam/promotions if
+   you don't see it in the main inbox.
+3. Open the email and click the **"Confirm subscription"** link inside it.
+   This opens a browser tab showing a small XML response with something like
+   `<ConfirmSubscriptionResponse>` — that confirms it worked, you don't need
+   to do anything else on that page.
+4. **Verify in the AWS Console:** go to **SNS → Subscriptions**, find the row
+   for your topic — the **Status** column should now read **"Confirmed"**
+   instead of "Pending confirmation."
+
+**If you don't see the email:**
+- Check spam/junk folders
+- Double-check the `NotificationEmail` parameter value you passed at deploy
+  time actually matches your real address (a typo here means the email goes
+  nowhere and there's no error to warn you)
+- You can manually trigger a fresh confirmation email from the Console:
+  **SNS → Subscriptions** → select the pending row → **Request confirmation**
+  button
+
+**Until this step is done, the contact form will still "succeed"** from the
+website's point of view (the Lambda runs, DynamoDB logs the submission, SNS
+accepts the publish call) — but no email will actually reach you, since the
+one subscriber on the topic hasn't confirmed yet. This is a common source of
+"why didn't I get anything?" confusion — check DynamoDB for the submission
+record to confirm the pipeline itself is working even if the email didn't
+arrive.
 
 **Copy the API URL** from the deploy output's `Outputs` section
 (`ContactApiUrl`), and paste it into `index.html`, replacing the
@@ -374,4 +411,5 @@ costs nothing) but delete it manually for a fully clean sweep.
 | Files uploaded to S3 that shouldn't be there (`.yml`, `.py` in bucket root) | Project files were flat instead of in `lambda/` and `.github/workflows/` | Move files into correct subfolders before syncing |
 | `.gitignore` not excluding `.aws-sam/` | File accidentally created inside `.git/` instead of project root | Recreate it as a sibling of `index.html` |
 | `BucketNotEmpty` when deleting SAM's managed bucket | Bucket has versioning enabled; old versions + delete markers remain after a normal `rm` | Purge all object versions and delete markers first, then delete the bucket |
-| Contact form submissions never arrive | SNS email subscription never confirmed | Check inbox for AWS confirmation email, click confirm |
+| Contact form submissions never arrive | SNS email subscription never confirmed | Check inbox for AWS confirmation email, click confirm (see "Manually confirm the SNS subscription" in Step 5) |
+| Orphaned "Pending confirmation" row left in SNS → Subscriptions after teardown | Stack was deleted before the subscription was ever confirmed | Harmless — delete the row manually, or leave it; unconfirmed subscriptions expire on their own after a few days |
