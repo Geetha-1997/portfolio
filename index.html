@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geetha — AWS DevOps Engineer</title>
+<meta name="description" content="Geetha — Aspiring AWS DevOps Engineer. CI/CD, infrastructure as code, containers, and cloud automation.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0d1117;
+    --panel: #151b23;
+    --panel-2: #1c2330;
+    --border: #2a3341;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --green: #3fb950;
+    --green-dim: #2ea043;
+    --amber: #d29922;
+    --blue: #58a6ff;
+    --red: #f85149;
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+  }
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color: inherit; }
+  img{ max-width:100%; }
+  .wrap{ max-width: 980px; margin: 0 auto; padding: 0 24px; }
+  ::selection{ background: var(--green-dim); color: #06120a; }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline: 2px solid var(--blue); outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(13,17,23,0.88);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav{
+    max-width: 980px; margin: 0 auto; padding: 14px 24px;
+    display:flex; align-items:center; justify-content: space-between;
+  }
+  .logo{
+    font-family: var(--mono); font-weight:600; font-size: 15px; letter-spacing: -0.02em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{ width:8px; height:8px; border-radius:50%; background: var(--green); display:inline-block; box-shadow: 0 0 8px var(--green); }
+  .navlinks{ display:flex; gap: 28px; font-size: 14px; }
+  .navlinks a{ color: var(--muted); text-decoration:none; transition: color .15s; }
+  .navlinks a:hover{ color: var(--text); }
+  .navtoggle{ display:none; }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding: 88px 0 64px; }
+  .hero-grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items:center; }
+  .kicker{
+    font-family: var(--mono); color: var(--green); font-size: 13px;
+    margin-bottom: 18px; display:flex; align-items:center; gap:10px;
+  }
+  .kicker .bar{ width: 28px; height: 1px; background: var(--green); }
+  h1{
+    font-size: clamp(34px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1.12; margin-bottom: 20px;
+  }
+  h1 .accent{ color: var(--green); }
+  .lede{ color: var(--muted); font-size: 18px; max-width: 46ch; margin-bottom: 32px; }
+  .cta-row{ display:flex; gap: 14px; flex-wrap: wrap; }
+  .btn{
+    font-family: var(--mono); font-size: 14px; padding: 12px 20px; border-radius: 6px;
+    text-decoration:none; display:inline-flex; align-items:center; gap:8px; border:1px solid transparent;
+    cursor:pointer; transition: transform .12s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ transform: translateY(-1px); }
+  .btn-primary{ background: var(--green); color: #06210f; font-weight:600; }
+  .btn-primary:hover{ background: var(--green-dim); }
+  .btn-outline{ border-color: var(--border); color: var(--text); background: transparent; }
+  .btn-outline:hover{ border-color: var(--blue); }
+
+  /* terminal card */
+  .term{
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    overflow:hidden; box-shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+  }
+  .term-bar{
+    display:flex; align-items:center; gap:8px; padding: 10px 14px; border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+  .term-dot{ width:10px; height:10px; border-radius:50%; }
+  .term-dot.r{ background:#ff5f56; } .term-dot.y{ background:#ffbd2e; } .term-dot.g{ background:#27c93f; }
+  .term-title{ margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .term-body{ padding: 18px; font-family: var(--mono); font-size: 13.5px; min-height: 210px; }
+  .term-line{ color: var(--muted); margin-bottom: 6px; }
+  .term-prompt{ color: var(--green); }
+  .term-out{ color: var(--text); white-space: pre-wrap; }
+  .term-caret{ display:inline-block; width: 8px; height: 15px; background: var(--green); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  section{ padding: 72px 0; border-top: 1px solid var(--border); }
+  .section-head{ margin-bottom: 40px; }
+  .section-num{ font-family: var(--mono); color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+  h2{ font-size: 28px; font-weight: 700; letter-spacing: -0.01em; }
+  .section-sub{ color: var(--muted); margin-top: 8px; max-width: 60ch; }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .about-grid p{ color: var(--muted); margin-bottom: 16px; }
+  .about-grid p strong{ color: var(--text); font-weight: 600; }
+  .facts{ list-style:none; }
+  .facts li{
+    display:flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .facts li span:first-child{ color: var(--muted); }
+  .facts li span:last-child{ font-family: var(--mono); }
+
+  /* ---------- SKILLS (stack manifest) ---------- */
+  .stack{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow:hidden; }
+  .stack-group{ background: var(--panel); padding: 22px 24px; }
+  .stack-group h3{ font-family: var(--mono); font-size: 13px; color: var(--amber); margin-bottom: 14px; font-weight: 600; }
+  .chips{ display:flex; flex-wrap:wrap; gap: 8px; }
+  .chip{
+    font-family: var(--mono); font-size: 12.5px; padding: 6px 10px; border-radius: 5px;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+  }
+
+  /* ---------- EXPERIENCE (pipeline timeline) ---------- */
+  .pipeline{ position:relative; padding-left: 28px; }
+  .pipeline::before{ content:''; position:absolute; left: 6px; top: 6px; bottom: 6px; width: 2px; background: var(--border); }
+  .stage{ position:relative; padding-bottom: 36px; }
+  .stage:last-child{ padding-bottom: 0; }
+  .stage::before{
+    content:''; position:absolute; left: -28px; top: 3px; width: 14px; height:14px; border-radius:50%;
+    background: var(--bg); border: 2px solid var(--green); box-shadow: 0 0 0 3px var(--bg);
+  }
+  .stage-badge{ font-family: var(--mono); font-size: 11px; color: var(--green); background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); padding: 3px 8px; border-radius: 4px; display:inline-block; margin-bottom: 8px; }
+  .stage h3{ font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+  .stage .meta{ font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+  .stage p{ color: var(--muted); font-size: 14.5px; max-width: 62ch; }
+
+  /* ---------- PROJECTS (deploy log) ---------- */
+  .projects{ display:flex; flex-direction:column; gap: 16px; }
+  .project{
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 24px;
+    display:grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items:start;
+  }
+  .project-status{ font-family: var(--mono); font-size: 11px; color: var(--green); white-space:nowrap; padding-top:3px; }
+  .project h3{ font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .project p{ color: var(--muted); font-size: 14.5px; margin-bottom: 12px; }
+  .project .tags{ display:flex; flex-wrap:wrap; gap:6px; }
+  .tag{ font-family: var(--mono); font-size: 11.5px; padding: 3px 8px; border-radius: 4px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); }
+  .project .links{ display:flex; flex-direction:column; gap:8px; font-family: var(--mono); font-size: 13px; }
+  .project .links a{ text-decoration:none; color: var(--blue); }
+  .project .links a:hover{ text-decoration: underline; }
+
+  /* ---------- CONTACT (request payload) ---------- */
+  .contact-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items:start; }
+  .contact-info p{ color: var(--muted); margin-bottom: 24px; max-width: 46ch; }
+  .contact-channels{ display:flex; flex-direction:column; gap: 14px; }
+  .channel{ display:flex; align-items:center; gap: 12px; font-size: 14.5px; }
+  .channel .k{ font-family: var(--mono); color: var(--muted); width: 76px; flex-shrink:0; }
+  .channel a{ color: var(--text); text-decoration:none; border-bottom: 1px solid var(--border); }
+  .channel a:hover{ border-color: var(--blue); color: var(--blue); }
+
+  form{ background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+  .form-head{ font-family: var(--mono); font-size: 12px; color: var(--muted); padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .form-body{ padding: 18px 16px; }
+  .field{ margin-bottom: 16px; }
+  .field label{ display:block; font-family: var(--mono); font-size: 12px; color: var(--amber); margin-bottom: 6px; }
+  .field input, .field textarea{
+    width: 100%; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px;
+    padding: 11px 12px; color: var(--text); font-family: var(--sans); font-size: 14px;
+  }
+  .field input:focus, .field textarea:focus{ border-color: var(--blue); }
+  .field textarea{ resize: vertical; min-height: 100px; }
+  .submit-row{ display:flex; align-items:center; gap: 14px; }
+  #formStatus{ font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  #formStatus.ok{ color: var(--green); }
+  #formStatus.err{ color: var(--red); }
+
+  footer{ border-top: 1px solid var(--border); padding: 32px 0; }
+  footer .wrap{ display:flex; justify-content: space-between; align-items:center; flex-wrap: wrap; gap: 12px; }
+  footer p{ color: var(--muted); font-family: var(--mono); font-size: 12.5px; }
+  footer .links{ display:flex; gap: 18px; font-size: 13px; }
+  footer .links a{ color: var(--muted); text-decoration:none; }
+  footer .links a:hover{ color: var(--text); }
+
+  @media (max-width: 780px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .about-grid{ grid-template-columns: 1fr; gap: 32px; }
+    .stack{ grid-template-columns: 1fr; }
+    .contact-grid{ grid-template-columns: 1fr; }
+    .project{ grid-template-columns: 1fr; }
+    .navlinks{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo"><span class="dot"></span>geetha<span style="color:var(--muted)">.dev</span></div>
+    <div class="navlinks">
+      <a href="#about">about</a>
+      <a href="#stack">stack</a>
+      <a href="#experience">experience</a>
+      <a href="#projects">projects</a>
+      <a href="#contact">contact</a>
+    </div>
+    <a href="#contact" class="btn btn-outline" style="padding:8px 16px; font-size:13px;">get in touch</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="kicker"><span class="bar"></span>AVAILABLE FOR DEVOPS / CLOUD ROLES</div>
+        <h1>Building and shipping infrastructure that doesn't wake anyone up at 3am.</h1>
+        <p class="lede">I'm Geetha, an aspiring AWS DevOps engineer. I design CI/CD pipelines, automate infrastructure, and turn manual deploys into one-click releases.</p>
+        <div class="cta-row">
+          <a href="#projects" class="btn btn-primary">view projects</a>
+          <a href="#contact" class="btn btn-outline">send a message</a>
+        </div>
+      </div>
+      <div class="term">
+        <div class="term-bar">
+          <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+          <span class="term-title">geetha@devops — zsh</span>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-num">01 · about</div>
+        <h2>From learning the fundamentals to running production-grade pipelines.</h2>
+      </div>
+      <div class="about-grid">
+        <div>
+          <p>I got into DevOps the way most engineers in this field do — by getting tired of manual, error-prone deployments and wanting a system that just <strong>works, every time</strong>. That curiosity turned into hands-on practice with the modern DevOps toolchain: containers, orchestration, infrastructure as code, and CI/CD.</p>
+          <p>I'm currently building real projects on AWS — provisioning infrastructure with Terraform and CloudFormation, containerizing applications with Docker, and automating releases with GitHub Actions and Jenkins. This portfolio itself is one of those projects: it's deployed to S3 through a CI/CD pipeline I built and version-controlled on GitHub.</p>
+          <p>I'm looking for an entry-level to junior <strong>AWS DevOps Engineer</strong> role where I can keep building on this foundation alongside an experienced team.</p>
+        </div>
+        <ul class="facts">
+          <li><span>Focus</span><span>AWS · CI/CD · IaC</span></li>
+          <li><span>Cloud</span><span>AWS (hands-on)</span></li>
+          <li><span>Status</span><span style="color:var(--green)">open to work</span></li>
+          <li><span>Location</span><span>India</span></li>
+          <li><span>Resume</span><span><a href="#" style="color:var(--blue); text-decoration:none;">download →</a></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-num">02 · stack</div>
+        <h2>Tools I use to build, ship, and run infrastructure.</h2>
+        <p class="section-sub">Edit this list to match your actual hands-on experience — recruiters check.</p>
+      </div>
+      <div class="stack">
+        <div class="stack-group">
+          <h3>CLOUD &amp; INFRASTRUCTURE</h3>
+          <div class="chips">
+            <span class="chip">AWS EC2</span><span class="chip">AWS S3</span><span class="chip">AWS Lambda</span>
+            <span class="chip">AWS IAM</span><span class="chip">AWS VPC</span><span class="chip">AWS CloudFormation</span>
+            <span class="chip">Terraform</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>CI/CD &amp; AUTOMATION</h3>
+          <div class="chips">
+            <span class="chip">GitHub Actions</span><span class="chip">Jenkins</span><span class="chip">Ansible</span>
+            <span class="chip">Bash</span><span class="chip">Python</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>CONTAINERS &amp; ORCHESTRATION</h3>
+          <div class="chips">
+            <span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Amazon ECS</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>MONITORING &amp; VERSION CONTROL</h3>
+          <div class="chips">
+            <span class="chip">CloudWatch</span><span class="chip">Prometheus</span><span class="chip">Grafana</span>
+            <span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">Linux</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-num">03 · experience</div>
+        <h2>How I've been building toward this role.</h2>
+      </div>
+      <div class="pipeline">
+        <div class="stage">
+          <div class="stage-badge">● in progress</div>
+          <h3>Self-directed AWS DevOps projects</h3>
+          <div class="meta">2025 — present</div>
+          <p>Building and deploying hands-on projects covering IaC, containerized deployments, and CI/CD pipelines, including this portfolio's own S3 + GitHub Actions deployment pipeline.</p>
+        </div>
+        <div class="stage">
+          <div class="stage-badge">✓ complete</div>
+          <h3>AWS &amp; DevOps fundamentals</h3>
+          <div class="meta">Certifications / coursework — add dates</div>
+          <p>Core AWS services, Linux administration, networking basics, and the CI/CD mental model — placeholder, replace with your actual certifications (e.g. AWS Certified Cloud Practitioner / Solutions Architect – Associate).</p>
+        </div>
+        <div class="stage">
+          <div class="stage-badge">✓ complete</div>
+          <h3>Prior role or education</h3>
+          <div class="meta">Add your background here</div>
+          <p>Replace this with your degree, bootcamp, or previous job — whatever gives context on how you arrived at DevOps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-num">04 · projects</div>
+        <h2>Deploy log.</h2>
+        <p class="section-sub">Replace these with your real repos and a short write-up of what each one demonstrates.</p>
+      </div>
+      <div class="projects">
+        <div class="project">
+          <div class="project-status">✓ deployed</div>
+          <div>
+            <h3>This portfolio — S3 + GitHub Actions CI/CD</h3>
+            <p>Static site hosted on Amazon S3, deployed automatically on every push to <code>main</code> via a GitHub Actions workflow. Includes a serverless contact form backed by API Gateway, Lambda, and SNS.</p>
+            <div class="tags"><span class="tag">S3</span><span class="tag">GitHub Actions</span><span class="tag">Lambda</span><span class="tag">API Gateway</span><span class="tag">SNS</span></div>
+          </div>
+          <div class="links"><a href="#">repo →</a><a href="#">live site →</a></div>
+        </div>
+        <div class="project">
+          <div class="project-status">✓ deployed</div>
+          <div>
+            <h3>Infrastructure as Code with Terraform</h3>
+            <p>Provisioned a VPC, subnets, security groups, and an EC2 fleet behind a load balancer entirely through Terraform modules — replace with your real project details.</p>
+            <div class="tags"><span class="tag">Terraform</span><span class="tag">AWS VPC</span><span class="tag">EC2</span><span class="tag">ALB</span></div>
+          </div>
+          <div class="links"><a href="#">repo →</a></div>
+        </div>
+        <div class="project">
+          <div class="project-status">◐ in progress</div>
+          <div>
+            <h3>Containerized app on Amazon ECS</h3>
+            <p>Dockerized a sample application and deployed it to ECS Fargate with a Jenkins pipeline handling build, test, and push to ECR — replace with your real project details.</p>
+            <div class="tags"><span class="tag">Docker</span><span class="tag">ECS Fargate</span><span class="tag">Jenkins</span><span class="tag">ECR</span></div>
+          </div>
+          <div class="links"><a href="#">repo →</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-num">05 · contact</div>
+        <h2>Let's talk.</h2>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p>Open to AWS DevOps Engineer roles, internships, and collaborations. Send a message below or reach out directly — I read everything myself.</p>
+          <div class="contact-channels">
+            <div class="channel"><span class="k">email</span><a href="mailto:geethabca888@gmail.com">geethabca888@gmail.com</a></div>
+            <div class="channel"><span class="k">github</span><a href="https://github.com/Geetha-1997" target="_blank" rel="noopener">github.com/Geetha-1997</a></div>
+            <div class="channel"><span class="k">linkedin</span><a href="https://linkedin.com/in/geetha-n-59070a406" target="_blank" rel="noopener">linkedin.com/in/geetha-n-59070a406</a></div>
+            <div class="channel"><span class="k">location</span><span style="color:var(--muted)">India</span></div>
+          </div>
+        </div>
+        <form id="contactForm">
+          <div class="form-head">POST /contact</div>
+          <div class="form-body">
+            <div class="field">
+              <label for="name">name</label>
+              <input type="text" id="name" name="name" required autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="email">email</label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="message">message</label>
+              <textarea id="message" name="message" required></textarea>
+            </div>
+            <div class="submit-row">
+              <button type="submit" class="btn btn-primary" id="submitBtn">send message</button>
+              <span id="formStatus"></span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© <span id="year"></span> Geetha — built and deployed with AWS S3 + GitHub Actions.</p>
+    <div class="links">
+      <a href="https://github.com/Geetha-1997" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/in/geetha-n-59070a406" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:geethabca888@gmail.com">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Terminal boot sequence
+  const termBody = document.getElementById('termBody');
+  const lines = [
+    { prompt: '$', text: 'whoami', delay: 40 },
+    { out: 'geetha — aws devops engineer' },
+    { prompt: '$', text: 'cat skills.txt', delay: 25 },
+    { out: 'aws · terraform · docker · kubernetes\ngithub-actions · jenkins · ansible · linux' },
+    { prompt: '$', text: './deploy.sh --env production', delay: 20 },
+    { out: '==> syncing build to s3://geetha-portfolio\n==> invalidating cache\n==> status: ✓ deploy successful' },
+  ];
+
+  async function typeLine(el, text, delay){
+    for(let i=0;i<text.length;i++){
+      el.textContent += text[i];
+      await new Promise(r=>setTimeout(r, delay));
+    }
+  }
+
+  async function bootTerminal(){
+    for(const line of lines){
+      const row = document.createElement('div');
+      row.className = 'term-line';
+      termBody.appendChild(row);
+      if(line.prompt){
+        const promptSpan = document.createElement('span');
+        promptSpan.className = 'term-prompt';
+        promptSpan.textContent = line.prompt + ' ';
+        row.appendChild(promptSpan);
+        const textSpan = document.createElement('span');
+        textSpan.style.color = 'var(--text)';
+        row.appendChild(textSpan);
+        await typeLine(textSpan, line.text, line.delay);
+        await new Promise(r=>setTimeout(r, 200));
+      } else {
+        row.classList.add('term-out');
+        row.style.color = 'var(--muted)';
+        row.style.marginBottom = '14px';
+        row.textContent = line.out;
+        await new Promise(r=>setTimeout(r, 350));
+      }
+    }
+    const caretRow = document.createElement('div');
+    caretRow.className = 'term-line';
+    caretRow.innerHTML = '<span class="term-prompt">$ </span><span class="term-caret"></span>';
+    termBody.appendChild(caretRow);
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    termBody.innerHTML = lines.map(l => l.prompt ? `<div class="term-line"><span class="term-prompt">${l.prompt} </span>${l.text}</div>` : `<div class="term-line term-out" style="color:var(--muted); margin-bottom:14px;">${l.out}</div>`).join('');
+  } else {
+    bootTerminal();
+  }
+
+  // Contact form submit — wire this to your API Gateway endpoint (see README)
+ const CONTACT_API_URL = 'https://pe6ryl5c9l.execute-api.ap-south-1.amazonaws.com/contact';
+
+  const form = document.getElementById('contactForm');
+  const status = document.getElementById('formStatus');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.className = '';
+    status.textContent = 'sending…';
+    submitBtn.disabled = true;
+
+    const payload = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      message: document.getElementById('message').value,
+    };
+
+    try {
+      if (CONTACT_API_URL.includes('YOUR-API-ID')) {
+        throw new Error('not_configured');
+      }
+      const res = await fetch(CONTACT_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('request_failed');
+      status.className = 'ok';
+      status.textContent = '✓ message sent — I\'ll reply soon.';
+      form.reset();
+    } catch (err) {
+      if (err.message === 'not_configured') {
+        status.className = 'err';
+        status.textContent = 'contact backend not connected yet — see README';
+      } else {
+        status.className = 'err';
+        status.textContent = 'something went wrong — email me directly instead.';
+      }
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

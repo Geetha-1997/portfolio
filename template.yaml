@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Serverless contact-form backend for Geetha's portfolio site.
+  API Gateway -> Lambda -> SNS (email/SMS notification to the site owner).
+
+Parameters:
+  NotificationEmail:
+    Type: String
+    Description: Email address that receives contact-form submissions.
+  AllowedOrigin:
+    Type: String
+    Default: "*"
+    Description: Set to your S3 website URL once known, e.g. http://your-bucket.s3-website-us-east-1.amazonaws.com
+
+Resources:
+  ContactTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: portfolio-contact-form
+      Subscription:
+        - Endpoint: !Ref NotificationEmail
+          Protocol: email
+
+  # Logs every submission (id, name, email, message, timestamp).
+  # On-demand billing: no capacity to plan for, and it sits inside DynamoDB's
+  # always-free tier for a contact form's volume (25 GB storage free).
+  ContactTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: portfolio-contact-submissions
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  ContactFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: portfolio-contact-handler
+      Handler: contact_handler.handler
+      Runtime: python3.12
+      CodeUri: lambda/
+      Timeout: 10
+      MemorySize: 128
+      Environment:
+        Variables:
+          TOPIC_ARN: !Ref ContactTopic
+          TABLE_NAME: !Ref ContactTable
+      Policies:
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt ContactTopic.TopicName
+        - DynamoDBWritePolicy:
+            TableName: !Ref ContactTable
+      Events:
+        ContactApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ContactHttpApi
+            Path: /contact
+            Method: POST
+
+  ContactHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - !Ref AllowedOrigin
+        AllowMethods:
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+
+Outputs:
+  ContactApiUrl:
+    Description: Invoke URL to put into index.html as CONTACT_API_URL
+    Value: !Sub "https://${ContactHttpApi}.execute-api.${AWS::Region}.amazonaws.com/contact"
+  ContactTopicArn:
+    Value: !Ref ContactTopic
+  ContactTableName:
+    Value: !Ref ContactTable
